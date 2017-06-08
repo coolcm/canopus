@@ -15,6 +15,7 @@ func Dial(address string) (conn Connection, err error) {
 	return
 }
 
+/*
 func DialDTLS(address, identity, psk string) (conn Connection, err error) {
 	udpConn, err := net.Dial("udp", address)
 	if err != nil {
@@ -28,6 +29,7 @@ func DialDTLS(address, identity, psk string) (conn Connection, err error) {
 
 	return
 }
+*/
 
 func NewObserveMessage(r string, val interface{}, msg Message) ObserveMessage {
 	return &CoapObserveMessage{
