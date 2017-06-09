@@ -319,7 +319,7 @@ func (s *DefaultCoapServer) ListenAndServeDTLS(addr string) {
 func (s *DefaultCoapServer) ListenAndServe(addr string) {
 	s.addDiscoveryRoute()
 
-	conn := s.createConn(addr)
+	conn := s.createUDP4Conn(addr)
 
 	if conn == nil {
 		log.Fatal("An error occured starting up CoAP Server")
@@ -328,6 +328,26 @@ func (s *DefaultCoapServer) ListenAndServe(addr string) {
 		go s.handleIncomingData(conn)
 		go s.events.Started(s)
 		go s.handleMessageIDPurge()
+	}
+}
+
+func (s *DefaultCoapServer) createUDP4Conn(udp4addr string) ServerConnection {
+	localHost := udp4addr
+	if !strings.Contains(localHost, ":") {
+		localHost = ":" + localHost
+	}
+	localAddr, err := net.ResolveUDPAddr("udp4", localHost)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	conn, err := net.ListenUDP("udp4", localAddr)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return &UDPServerConnection{
+		conn: conn,
 	}
 }
 
